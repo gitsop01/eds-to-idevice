@@ -1,0 +1,6 @@
+* error reporting is non-existant (a GError is passed in most places where
+it matters, but it's never set)
+* we should try harder to preserve IDs sent by the device (in particular
+the last value in the a/b/c triplet used for multi-valued fields)
+* the API can probably be improved in places
+* this hasn't been tested at all for partial syncs
