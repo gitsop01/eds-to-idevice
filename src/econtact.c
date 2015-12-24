@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
+ *  Copyright (C) 2015 Timothy Ward gtwa001@gmail.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  */
 #include "eti-contact.h"
 #include "eti-eds.h"
-#include <libebook/e-contact.h>
+#include <libebook-contacts/e-contact.h>
 
 static gboolean is_empty(const char *str)
 {
@@ -195,6 +196,8 @@ static void convert_dates(EContact *econtact, EtiContact *contact)
     }
 }
 
+
+	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
 static void convert_emails(EContact *econtact, EtiContact *contact)
 {
     gchar *email;
@@ -216,6 +219,8 @@ static void convert_emails(EContact *econtact, EtiContact *contact)
     g_free(email);
 }
 
+
+	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
 static void convert_urls(EContact *econtact, EtiContact *contact)
 {
     gchar *url;
@@ -388,6 +393,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     gchar *department;
     gchar *notes;
 
+	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
     name = e_contact_get(econtact, E_CONTACT_NAME);
     company_name = e_contact_get_string(econtact, E_CONTACT_ORG);
     if ((name == NULL) && (company_name != NULL)) {
@@ -399,6 +405,9 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     }
 
     /* Organizational fields */
+
+	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+
     eti_contact_set_company_name(contact, company_name);
     g_free(company_name);
     department = e_contact_get_string(econtact, E_CONTACT_ORG_UNIT);
@@ -409,6 +418,9 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     g_free(job_title);
 
     /* misc fields */
+
+	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+
     notes = e_contact_get_string(econtact, E_CONTACT_NOTE);
     eti_contact_set_notes(contact, notes);
     g_free(notes);

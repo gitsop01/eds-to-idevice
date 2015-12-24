@@ -18,7 +18,7 @@
 #ifndef ETI_CONTACT_PLIST_PARSER_H
 #define ETI_CONTACT_PLIST_PARSER_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <plist/plist.h>
 
 typedef struct _EtiContactPlistParser EtiContactPlistParser;
