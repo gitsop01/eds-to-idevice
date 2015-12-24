@@ -21,7 +21,7 @@
 #include "eti-plist.h"
 #include "eti-sync.h"
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <libimobiledevice/libimobiledevice.h>
 #include <libimobiledevice/mobilesync.h>
 #include <libimobiledevice/lockdown.h>

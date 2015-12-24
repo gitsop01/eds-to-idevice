@@ -18,7 +18,7 @@
 #ifndef ETI_PLIST_H
 #define ETI_PLIST_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <plist/plist.h>
 
 void eti_plist_set_debug(gboolean enable_debug);

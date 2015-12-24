@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
+ *  Copyright (C) 2015 Timothy Ward gtwa001@gmail.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
  *
  */
 #include "eti-eds.h"
+#include <libebook/libebook.h>
 
 GQuark eti_ebook_error_quark(void)
 {
@@ -54,6 +56,7 @@ GList *eti_eds_get_contacts(EBook *book, const gchar *query_str, GError **error)
      * Returns a gboolean which tells us whether the query 
      * succeeded or not
      */
+	/* FIXME e_book_get_contacts has been deprecated TW 21/12/15 */
     query_succeeded = e_book_get_contacts(book, query, &contacts, error);
     /* We don't need the query object anymore */
     e_book_query_unref(query);
@@ -66,6 +69,9 @@ GList *eti_eds_get_contacts(EBook *book, const gchar *query_str, GError **error)
 
     return contacts;
 }
+
+	/* FIXME e_book_new_from_uri has been deprecated TW 21/12/15 */
+	/* FIXME e_book_new_default_addressbook has been deprecated TW 21/12/15 */
 
 EBook *eti_eds_open_addressbook (const char *addressbook_uri, GError **error)
 {
@@ -97,10 +103,14 @@ void eti_eds_dump_addressbooks(GError **error)
     GSList *list = NULL, *l = NULL;
     GError *err;
 
+	/* FIXME e_book_get_addressbooks has been deprecated TW 21/12/15 */
+
     /* Query all addressbooks available on the system */
     if(!e_book_get_addressbooks(&books, &err)) {
         return;
     }
+
+	/* FIXME e_source_list_peek_group() has been deprecated TW 21/12/15 */
 
     /* Get a real list of the books */
     list = e_source_list_peek_groups(books);
@@ -115,12 +125,18 @@ void eti_eds_dump_addressbooks(GError **error)
     for(l = list; l!= NULL; l = l->next) {
         GSList *groups, *s;
 
+	/* FIXME e_source_list_peek_sources() has been deprecated TW 21/12/15 */
+
         groups = e_source_group_peek_sources(l->data);
 
         for(s = groups; s != NULL; s = s->next) {
             ESource *source = E_SOURCE(s->data);
-            char *uri;
+            
 
+	/* FIXME e_source_get_uri() has been deprecated TW 21/12/15 */
+	/* FIXME e_source_peek_name() has been deprecated TW 21/12/15 */
+
+	    char *uri;
             uri = e_source_get_uri(source);
 
             g_print("Source name: %s, URI: %s\n\n",

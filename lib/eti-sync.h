@@ -18,7 +18,7 @@
 #ifndef ETI_SYNC_H
 #define ETI_SYNC_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 
 #define ETI_SYNC_ERROR eti_sync_error_quark()
 

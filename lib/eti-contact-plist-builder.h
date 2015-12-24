@@ -18,7 +18,7 @@
 #ifndef ETI_CONTACT_PLIST_BUILDER_H
 #define ETI_CONTACT_PLIST_BUILDER_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <plist/plist.h>
 
 GList *eti_contact_plist_builder_build(GHashTable *contacts);

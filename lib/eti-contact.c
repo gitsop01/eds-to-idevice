@@ -17,7 +17,7 @@
  */
 #include "eti-contact.h"
 
-#include <glib.h>
+#include <glib2.0/glib.h>
 
 GQuark eti_contact_error_quark(void)
 {

@@ -19,7 +19,7 @@
 #include "eti-contact-plist-parser.h"
 #include "eti-plist.h"
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <stdlib.h>
 #include <string.h>
 

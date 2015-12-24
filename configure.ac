@@ -1,8 +1,12 @@
+
+
 AC_PREREQ(2.65)
 AC_INIT([eds-to-idevice], [0.1.0, nospam@nowhere.com])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
+
+$(LIBDIR) :/usr/lib64
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2 no-dist-gzip subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])

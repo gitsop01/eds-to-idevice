@@ -18,7 +18,7 @@
 #ifndef ETI_EDS_H
 #define ETI_EDS_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include <libebook/e-book.h>
 #include "eti-contact.h"
 

@@ -18,7 +18,7 @@
 #ifndef ETI_CONTACT_H
 #define ETI_CONTACT_H
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 
 typedef struct _EtiContact EtiContact;
 
