@@ -33,6 +33,7 @@ GList *eti_eds_get_contacts(EBook *book, const gchar *query_str, GError **error)
 {
     EBookQuery *query;
     GList *contacts;
+    GSList *out-contacts
     gboolean query_succeeded;
 
     /* Create a query */
@@ -56,8 +57,10 @@ GList *eti_eds_get_contacts(EBook *book, const gchar *query_str, GError **error)
      * Returns a gboolean which tells us whether the query 
      * succeeded or not
      */
+	
 	/* FIXME e_book_get_contacts has been deprecated TW 21/12/15 */
-    query_succeeded = e_book_get_contacts(book, query, &contacts, error);
+ /*     query_succeeded = e_book_get_contacts(book, query, &contacts, error); */
+	query_succeeded =e_book_client_get_contacts_sync(book, ????query, &out-contacts, NULL, error);
     /* We don't need the query object anymore */
     e_book_query_unref(query);
     if(!query_succeeded) {
@@ -86,6 +89,8 @@ EBook *eti_eds_open_addressbook (const char *addressbook_uri, GError **error)
         g_prefix_error (error, "Couldn't open default address book: ");
         return NULL;
     }
+
+	/* FIXME e_book_open has been deprecated TW 24/12/15 */
 
     e_book_open (ebook, TRUE, error);
     if ((error != NULL) && (*error != NULL)) {

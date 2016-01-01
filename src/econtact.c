@@ -202,19 +202,19 @@ static void convert_emails(EContact *econtact, EtiContact *contact)
 {
     gchar *email;
 
-    email = e_contact_get_string(econtact, E_CONTACT_EMAIL_1);
+    email = e_contact_get(econtact, E_CONTACT_EMAIL_1);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get_string(econtact, E_CONTACT_EMAIL_2);
+    email = e_contact_get(econtact, E_CONTACT_EMAIL_2);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get_string(econtact, E_CONTACT_EMAIL_3);
+    email = e_contact_get(econtact, E_CONTACT_EMAIL_3);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get_string(econtact, E_CONTACT_EMAIL_4);
+    email = e_contact_get(econtact, E_CONTACT_EMAIL_4);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 }
@@ -225,11 +225,11 @@ static void convert_urls(EContact *econtact, EtiContact *contact)
 {
     gchar *url;
 
-    url = e_contact_get_string(econtact, E_CONTACT_HOMEPAGE_URL);
+    url = e_contact_get(econtact, E_CONTACT_HOMEPAGE_URL);
     eti_contact_add_url(contact, ETI_CONTACT_URL_TYPE_HOMEPAGE, NULL, url);
     g_free(url);
 
-    url = e_contact_get_string(econtact, E_CONTACT_BLOG_URL);
+    url = e_contact_get(econtact, E_CONTACT_BLOG_URL);
     eti_contact_add_url(contact, ETI_CONTACT_FIELD_TYPE_OTHER, "blog", url);
     g_free(url);
 }
@@ -394,8 +394,8 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     gchar *notes;
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
-    name = e_contact_get(econtact, E_CONTACT_NAME);
-    company_name = e_contact_get_string(econtact, E_CONTACT_ORG);
+    name = e_contact(econtact, E_CONTACT_NAME);
+    company_name = e_contact_get(econtact, E_CONTACT_ORG);
     if ((name == NULL) && (company_name != NULL)) {
         contact = eti_contact_new_company(company_name);
     } else {
@@ -410,10 +410,10 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
 
     eti_contact_set_company_name(contact, company_name);
     g_free(company_name);
-    department = e_contact_get_string(econtact, E_CONTACT_ORG_UNIT);
+    department = e_contact_get(econtact, E_CONTACT_ORG_UNIT);
     eti_contact_set_department(contact, department);
     g_free(department);
-    job_title = e_contact_get_string(econtact, E_CONTACT_TITLE);
+    job_title = e_contact_get(econtact, E_CONTACT_TITLE);
     eti_contact_set_job_title(contact, job_title);
     g_free(job_title);
 
@@ -421,7 +421,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
 
-    notes = e_contact_get_string(econtact, E_CONTACT_NOTE);
+    notes = e_contact_get(econtact, E_CONTACT_NOTE);
     eti_contact_set_notes(contact, notes);
     g_free(notes);
     add_photo(contact, econtact);
