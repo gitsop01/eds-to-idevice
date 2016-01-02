@@ -394,8 +394,10 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     gchar *notes;
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+
     name = e_contact(econtact, E_CONTACT_NAME);
     company_name = e_contact_get(econtact, E_CONTACT_ORG);
+
     if ((name == NULL) && (company_name != NULL)) {
         contact = eti_contact_new_company(company_name);
     } else {
@@ -421,7 +423,11 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
 
+<<<<<<< HEAD
     notes = e_contact_get(econtact, E_CONTACT_NOTE);
+=======
+    notes = e_contact_get_string(econtact, E_CONTACT_NOTE);
+>>>>>>> ff1e9e43ad380d159c7df804eedc2283a00c0152
     eti_contact_set_notes(contact, notes);
     g_free(notes);
     add_photo(contact, econtact);

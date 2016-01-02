@@ -61,6 +61,7 @@ GList *eti_eds_get_contacts(EBook *book, const gchar *query_str, GError **error)
 	/* FIXME e_book_get_contacts has been deprecated TW 21/12/15 */
  /*     query_succeeded = e_book_get_contacts(book, query, &contacts, error); */
 	query_succeeded =e_book_client_get_contacts_sync(book, ????query, &out-contacts, NULL, error);
+
     /* We don't need the query object anymore */
     e_book_query_unref(query);
     if(!query_succeeded) {
