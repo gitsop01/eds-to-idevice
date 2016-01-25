@@ -14,19 +14,19 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA.
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 #include "eti-contact.h"
 #include "eti-eds.h"
-#include <libebook-contacts/e-contact.h>
+#include <evolution-data-server/libebook-contacts/libebook-contacts.h>
 
 static gboolean is_empty(const char *str)
 {
     return ((str == NULL) || (*str == '\0'));
 }
 
-static gchar *e_contact_get_string(EContact *contact, EContactField field_id)
+static gchar *E_contact_get_string(EContact *contact, EContactField field_id)
 {
   gchar *value;
   value = e_contact_get(contact, field_id);
@@ -99,7 +99,7 @@ static void add_names(EtiContact *contact, EContact *econtact,
     eti_contact_set_name_suffix(contact, get_string_not_empty(name->suffixes));
     eti_contact_set_title(contact, get_string_not_empty(name->prefixes));
 
-    nickname = e_contact_get_string(econtact, E_CONTACT_NICKNAME);
+    nickname = E_contact_get_string(econtact, E_CONTACT_NICKNAME);
     eti_contact_set_nickname(contact, nickname);
     g_free(nickname);
 }
@@ -136,7 +136,7 @@ static void add_phone_number(EContact *econtact, EContactField field_id,
 {
     gchar *phone_number;
 
-    phone_number = e_contact_get_string(econtact, field_id);
+    phone_number = E_contact_get_string(econtact, field_id);
     eti_contact_add_phone_number(contact, type, label, phone_number);
     g_free(phone_number);
 }
@@ -147,7 +147,7 @@ static void add_im_contact(EContact *econtact, EContactField field_id,
 {
     gchar *user_id;
 
-    user_id = e_contact_get_string(econtact, field_id);
+    user_id = E_contact_get_string(econtact, field_id);
     eti_contact_add_im_user_id(contact, type, NULL, service, user_id);
     g_free(user_id);
 }
@@ -197,39 +197,43 @@ static void convert_dates(EContact *econtact, EtiContact *contact)
 }
 
 
-	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+	/* FIXME e_contact_get_string has been deprecated but is a built function */
+	/* comflict with same name as library deprecated function TW 21/12/15 */
+
 static void convert_emails(EContact *econtact, EtiContact *contact)
 {
     gchar *email;
 
-    email = e_contact_get(econtact, E_CONTACT_EMAIL_1);
+    email = E_contact_get_string(econtact, E_CONTACT_EMAIL_1);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get(econtact, E_CONTACT_EMAIL_2);
+    email = E_contact_get_string(econtact, E_CONTACT_EMAIL_2);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get(econtact, E_CONTACT_EMAIL_3);
+    email = E_contact_get_string(econtact, E_CONTACT_EMAIL_3);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 
-    email = e_contact_get(econtact, E_CONTACT_EMAIL_4);
+    email = E_contact_get_string(econtact, E_CONTACT_EMAIL_4);
     eti_contact_add_email(contact, ETI_CONTACT_FIELD_TYPE_OTHER, NULL, email);
     g_free(email);
 }
 
 
-	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+	/* FIXME e_contact_get_string has been deprecated but is a built function */
+	/* comflict with same name as library deprecated function TW 21/12/15 */
+
 static void convert_urls(EContact *econtact, EtiContact *contact)
 {
     gchar *url;
 
-    url = e_contact_get(econtact, E_CONTACT_HOMEPAGE_URL);
+    url = E_contact_get_string(econtact, E_CONTACT_HOMEPAGE_URL);
     eti_contact_add_url(contact, ETI_CONTACT_URL_TYPE_HOMEPAGE, NULL, url);
     g_free(url);
 
-    url = e_contact_get(econtact, E_CONTACT_BLOG_URL);
+    url = E_contact_get_string(econtact, E_CONTACT_BLOG_URL);
     eti_contact_add_url(contact, ETI_CONTACT_FIELD_TYPE_OTHER, "blog", url);
     g_free(url);
 }
@@ -393,10 +397,15 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     gchar *department;
     gchar *notes;
 
-	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+	/* FIXME e_contact_get_string has been deprecated but is a built function */
+	/* comflict with same name as library deprecated function TW 21/12/15 */
 
-    name = e_contact(econtact, E_CONTACT_NAME);
-    company_name = e_contact_get(econtact, E_CONTACT_ORG);
+	/* FIXME  error: implicit declaration of function ‘e_contact’ */
+	/* [-Werror=implicit-function-declaration] name = e_contact(econtact, E_CONTACT_NAME); */
+
+
+    name = e_contact_get(econtact, E_CONTACT_NAME);
+    company_name = E_contact_get_string(econtact, E_CONTACT_ORG);
 
     if ((name == NULL) && (company_name != NULL)) {
         contact = eti_contact_new_company(company_name);
@@ -408,14 +417,16 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
 
     /* Organizational fields */
 
-	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+	/* FIXME e_contact_get_string has been deprecated but is a built function */
+	/* comflict with same name as library deprecated function TW 21/12/15 */
+
 
     eti_contact_set_company_name(contact, company_name);
     g_free(company_name);
-    department = e_contact_get(econtact, E_CONTACT_ORG_UNIT);
+    department = E_contact_get_string(econtact, E_CONTACT_ORG_UNIT);
     eti_contact_set_department(contact, department);
     g_free(department);
-    job_title = e_contact_get(econtact, E_CONTACT_TITLE);
+    job_title = E_contact_get_string(econtact, E_CONTACT_TITLE);
     eti_contact_set_job_title(contact, job_title);
     g_free(job_title);
 
@@ -423,7 +434,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
 
-    notes = e_contact_get(econtact, E_CONTACT_NOTE);
+    notes = E_contact_get_string(econtact, E_CONTACT_NOTE);
     eti_contact_set_notes(contact, notes);
     g_free(notes);
     add_photo(contact, econtact);

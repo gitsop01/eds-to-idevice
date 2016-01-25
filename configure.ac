@@ -6,8 +6,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-$(LIBDIR) :/usr/lib64
-
 AM_INIT_AUTOMAKE([foreign dist-bzip2 no-dist-gzip subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
@@ -86,7 +84,5 @@ dnl need glib 2.26 for GDateTime
 PKG_CHECK_MODULES(GLIB2, [glib-2.0 >= 2.26])
 PKG_CHECK_MODULES(EDS, [libebook-1.2])
 
-AC_CONFIG_FILES([
-Makefile
-])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

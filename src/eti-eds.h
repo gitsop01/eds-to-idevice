@@ -19,7 +19,7 @@
 #define ETI_EDS_H
 
 #include <glib-2.0/glib.h>
-#include <libebook/e-book.h>
+#include <evolution-data-server/libebook/libebook.h>
 #include "eti-contact.h"
 
 #define ETI_EBOOK_ERROR eti_ebook_error_quark()

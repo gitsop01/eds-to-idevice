@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA.
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *
  */
 #include "eti-contact.h"
@@ -50,7 +50,7 @@ static EtiOptions *parse_command_line(int argc, char **argv, GError **error)
       {
           { "transfer", 't', 0, G_OPTION_ARG_NONE, &options->transfer, "Transfer contacts to the device [default: false]", NULL },
           { "uuid", 'u', 0, G_OPTION_ARG_STRING, &options->idevice_uuid, "uuid of the device to use [default: autodetected]", "M" },
-          { "uri", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uri, "uri of the addressbook to use [default: system default]", "uri" },
+ /*         { "uri", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uri, "uri of the addressbook to use [default: system default]", "uri" }, */
           { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and URIs if all available addressbooks", NULL},
           { "save-photos", 'p', 0, G_OPTION_ARG_NONE, &options->save_photos, NULL },
           { "delete-all-contacts", 0, 0, G_OPTION_ARG_NONE, &options->wipe_contacts, "Delete all contacts on the device (DESTRUCTIVE!!) [default: off]", NULL },
@@ -160,6 +160,7 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
     GHashTable *contacts = NULL;
     gboolean success = FALSE;
 
+	/* FIXME addressbook_uri has been deprecated TW 18/01/16 */
     addressbook = eti_eds_open_addressbook(addressbook_uri, error);
     if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
         g_prefix_error(error, "Couldn't open addressbook: ");

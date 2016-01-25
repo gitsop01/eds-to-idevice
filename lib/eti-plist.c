@@ -47,7 +47,8 @@ void eti_plist_dict_set_date(plist_t dict, const char *key, GDateTime *date)
 
     epoch = g_date_time_new_utc(2001, 1, 1, 0, 0, 0);
     timespan = g_date_time_difference(date, epoch);
-    plist_dict_insert_item(dict, key,
+	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
+    plist_dict_set_item(dict, key,
                            plist_new_date(timespan/G_TIME_SPAN_SECOND,
                                           timespan%G_TIME_SPAN_SECOND));
     g_date_time_unref(epoch);
@@ -84,8 +85,8 @@ void eti_plist_dict_set_string(plist_t dict, const char *key, const char *value)
 {
     if (value == NULL)
         return;
-
-    plist_dict_insert_item(dict, key, plist_new_string(value));
+	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
+    plist_dict_set_item(dict, key, plist_new_string(value));
 }
 
 char *eti_plist_dict_get_string(plist_t node, const char *key)
@@ -111,7 +112,8 @@ void eti_plist_dict_set_data(plist_t dict, const char *key,
 {
     if (data == NULL)
         return;
-    plist_dict_insert_item(dict, key, plist_new_data((const gchar *)data, len));
+	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
+    plist_dict_set_item(dict, key, plist_new_data((const gchar *)data, len));
 }
 
 guchar *eti_plist_dict_get_data(plist_t node, const char *key, guint64 *len)
