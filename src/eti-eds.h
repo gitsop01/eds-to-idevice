@@ -31,12 +31,12 @@ typedef enum {
 } EtiEbookError;
 
 GQuark eti_ebook_error_quark(void);
-GList *eti_eds_get_contacts(EBook *book,
+GList *eti_eds_get_contacts(EBookClient *client,
                             const gchar *query_str,
                             GError **error);
-EBook *eti_eds_open_addressbook(const char *addressbook_uri, GError **error);
+EClient *eti_eds_open_addressbook(void);
 char *eti_eds_get_econtact_uid(EContact *econtact);
 EtiContact *eti_contact_from_econtact(EContact *econtact);
-void eti_eds_dump_addressbooks(GError **error);
+void eti_eds_dump_addressbooks(void);
 
 #endif

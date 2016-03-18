@@ -21,21 +21,34 @@
 #include <evolution-data-server/libebook/libebook.h>
 #include <evolution-data-server/libedataserver/libedataserver.h>
 
+ESourceRegistry *source_registry = NULL;
+
+
+
 GQuark eti_ebook_error_quark(void)
 {
     return g_quark_from_static_string("eti-ebook-error-quark");
 }
 
+/* NOTE */
+/* One note that isn't well-documented is the program needs to be running */
+/* a GLib main loop for the ESourceRegistry/EBookClient methods to work, as */
+/* they rely on GLib to invoke D-Bus methods and collect results. */
+
+
+
+
 /* Code reused from
  * http://code.eikke.com/ProjectSoylent/evo-addressbooks-test2.c
  * Copyright (C) 2005 Nicolas "Ikke" Trangez (eikke eikke commercial)
  */
-GList *eti_eds_get_contacts(EBook"Client FIXME TW" *book, const gchar *query_str, GError **error)
+GList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError **error)
 {
-    EbookQuery *query;
-    GList *contacts;
+    EBookQuery *query;
+  /*  GList *contacts; */
     GSList *out_contacts;
     gboolean query_succeeded;
+	gchar *query_string;
 
     /* Create a query */
     if (query_str == NULL) {
@@ -61,8 +74,8 @@ GList *eti_eds_get_contacts(EBook"Client FIXME TW" *book, const gchar *query_str
 	
 	/* FIXME e_book_get_contacts has been deprecated TW 21/12/15 */
  /*     query_succeeded = e_book_get_contacts(book, query, &contacts, error); */
-	
-	query_succeeded =e_book_client_get_contacts_sync(book, query, &out_contacts, NULL, error);
+	query_string = e_book_query_to_string( query);
+	query_succeeded =e_book_client_get_contacts_sync(client, query_string, &out_contacts, NULL, error);
 
     /* We don't need the query object anymore */
   /*  e_book_query_unref(query); */
@@ -73,20 +86,20 @@ GList *eti_eds_get_contacts(EBook"Client FIXME TW" *book, const gchar *query_str
         return NULL;
     }
 
-    return &out_contacts;
+    return NULL; /* FIXME return value required */
 }
 
 	/* FIXME e_book_new_from_uri has been deprecated TW 21/12/15 */
 	/* FIXME e_book_new_default_addressbook has been deprecated TW 21/12/15 */
 
-EBook *eti_eds_open_addressbook (const char FIXME *addressbook_uri, GError **error)
+EClient *eti_eds_open_addressbook(void)
 {
 
-Struct ESourceRegistry *registry = NULL;
 ESource *source;
-EClient *client;
-GError **error;
-GCancellable *cancellable = NULL;
+EClient *client = NULL;
+GError *error = NULL;
+/* const gchar *source_uid; */
+
 
  /*   EBook *ebook;  */
 
@@ -104,37 +117,50 @@ GCancellable *cancellable = NULL;
 
    /* e_book_open (ebook, TRUE, error); */
 
-	registry = e_source_registry_new_sync( GCancellable cancellable, GError **error)	
+	source_registry = e_source_registry_new_sync( NULL, &error);	
 	
-	if ((error != NULL) && (*error != NULL)) {
-        g_prefix_error (error, "Couldn't open new e_source_registry_new_sync registry: ");
-        error = NULL;
-        return NULL;
+	if (source_registry == NULL)
+	if (error != NULL) {
+        g_warning ("%s: %s", G_STRFUNC, error->message);
+      return FALSE;
     }
 
-	source = e_source_registry_ref_builtin_address_book( registry);
-	
-	client = e_book_client_connect_sync( source, 2, GCancellable cancellable, GError **error);
+	source = e_source_registry_ref_builtin_address_book( source_registry);
 
-    if ((error != NULL) && (*error != NULL)) {
-        g_prefix_error (error, "Couldn't open default address book client: ");
-        error = NULL;
-        return NULL;
+	/* source_uid = e_source_get_uid( source); */
+	
+	
+
+	client = e_book_client_connect_sync( source, 10, NULL, &error);
+
+	if (client == FALSE){
+		printf("eti_eds_open_addressbook---e_book_client_connect_sync failed");
+	}
+	
+    if (error != NULL){
+        g_warning ("%s: %s", G_STRFUNC, error->message);
+      return FALSE;
     }
+    g_object_unref(source);
 
   /*  return ebook; */
-  /* we can return client here or add  e_book_client_connect() to get an EBookClient object.
-
-      return client;
+  /* we need to return EBookClient not EClient */ 
+  /* or add  e_book_client_connect() to get an EBookClient object. */
+	
+     return client; 
 }
 
-void eti_eds_dump_addressbooks(GError **error)
+void eti_eds_dump_addressbooks(void)
 {
-   /* ESourceList *books = NULL; */
-    GList *list = NULL, *l = NULL;
-    GError **error;
-	Struct ESourceRegistry *registry = NULL;
-	const gchar uid;
+
+ESourceRegistry *source_registry = NULL;
+GError *error = NULL;
+/* char *p; */
+
+GList *list = NULL, *l = NULL;  /* *data */
+
+	  
+	 /*	const gchar uid; */
 
 	/* FIXME e_book_get_addressbooks has been deprecated TW 21/12/15 */
 
@@ -149,22 +175,28 @@ void eti_eds_dump_addressbooks(GError **error)
     /* Get a real list of the books */
 
 	/* list = e_source_list_peek_groups(books); */
-
-	list = e_source_registry_list_sources( registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
+	
+	source_registry = e_source_registry_new_sync( NULL, &error);
+	
+	if (source_registry == NULL)
+	if (error != NULL) {
+        g_warning ("%s: %s", G_STRFUNC, error->message);
+      return;
+	}
+	list = e_source_registry_list_sources( source_registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
 
 	if(list == NULL) {
-        g_set_error(error, ETI_EBOOK_ERROR,
-                    ETI_EBOOK_ERROR_ADDRESSBOOK,
-                    "No addressbooks found");
+       printf("No E_Source_Extension_Address_Book Registry List found");
         return;
     }
 
-    /* Loop through the list of books */
-  /*  for(l = list; l!= NULL; l = l->next) { */
-        
+    /* Loop through the list of sources */
+    for(l = list; l!= NULL; l = l->next) {
+       
 	/*	GSList *groups, *s; */
 
-	printf("list of address books sources is: %s", l->data ); 
+	 printf("List of EWS-Address-books-sources are: %s", (char *)l->data);
+	
 	
 	/* FIXME e_source_list_peek_sources() has been deprecated TW 21/12/15 */
 
@@ -184,11 +216,12 @@ void eti_eds_dump_addressbooks(GError **error)
    	 /*		 g_print("Source name: %s, UID: %s\n\n", e_source_get_display_name( source), &uid); */
     		
 	 /*       g_free(uri);	*/
-     /*   } */
-    }
+     /*   }  */
+   }		
 
     /* Clean up */
     /* g_object_unref(books);	*/
-    g_list_free_full( list, g_object_unref);
+
+    g_list_free_full(list, (GDestroyNotify) g_object_unref );
 }
 

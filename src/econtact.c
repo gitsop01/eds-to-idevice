@@ -198,7 +198,7 @@ static void convert_dates(EContact *econtact, EtiContact *contact)
 
 
 	/* FIXME e_contact_get_string has been deprecated but is a built function */
-	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* conflicts with same name as library deprecated function TW 21/12/15 */
 
 static void convert_emails(EContact *econtact, EtiContact *contact)
 {
@@ -398,7 +398,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     gchar *notes;
 
 	/* FIXME e_contact_get_string has been deprecated but is a built function */
-	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* conflict with same name as library deprecated function TW 21/12/15 */
 
 	/* FIXME  error: implicit declaration of function ‘e_contact’ */
 	/* [-Werror=implicit-function-declaration] name = e_contact(econtact, E_CONTACT_NAME); */
@@ -418,7 +418,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     /* Organizational fields */
 
 	/* FIXME e_contact_get_string has been deprecated but is a built function */
-	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* conflict with same name as library deprecated function TW 21/12/15 */
 
 
     eti_contact_set_company_name(contact, company_name);
@@ -433,6 +433,7 @@ EtiContact *eti_contact_from_econtact(EContact *econtact)
     /* misc fields */
 
 	/* FIXME e_contact_get_string has been deprecated TW 21/12/15 */
+	/* conflict with same name as library deprecated function TW 21/12/15 */
 
     notes = E_contact_get_string(econtact, E_CONTACT_NOTE);
     eti_contact_set_notes(contact, notes);

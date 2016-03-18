@@ -1,3 +1,19 @@
+https://github.com/gitsop01/eds-to-idevice
+Update to gtk3.18 + libmobiledevice 1.20 + evolution-data-server 3.18
+
+1) FOUND GLIB2_FLAGS Missing from Build section of library in Makefile.am stopping compiler DONE
+2) Find and Update deprecated functions in all source files WIP
+3) Updated source to match new eds API
+4) Check error reporting and fix as required.
+5) Run application and see it it works correctly
+6) Fix application errors and bugs.
+7) Build a gui and recode to allow two-way syncs and merges or write contacts data to file for backup 
+8) Incorporate the program into sbmanager as add-on maybe.
+
+
+
+ORIGINAL TO-DO FILE ITEMS
+
 * error reporting is non-existant (a GError is passed in most places where
 it matters, but it's never set)
 * we should try harder to preserve IDs sent by the device (in particular

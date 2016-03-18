@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
- *  Copyright (C) 2015 Timothy Ward gtwa001@gmail.com
+ *  Copyright (C) 2015-2016 Timothy Ward gtwa001@gmail.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "eti-eds.h"
 #include "eti-plist.h"
 #include "eti-sync.h"
+#include <glib-2.0/glib.h>
 
 struct _EtiOptions {
     gboolean transfer;
@@ -39,6 +40,7 @@ static void eti_options_free(EtiOptions *options)
     g_free(options->addressbook_uri);
     g_free(options);
 }
+
 
 static EtiOptions *parse_command_line(int argc, char **argv, GError **error)
 {
@@ -159,15 +161,20 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
     GList *e_contacts = NULL;
     GHashTable *contacts = NULL;
     gboolean success = FALSE;
+	EBookClient *client;
 
-	/* FIXME addressbook_uri has been deprecated TW 18/01/16 */
-    addressbook = eti_eds_open_addressbook(addressbook_uri, error);
+	/* FIXME addressbook_uri has been deprecated TW 20/12/15 */
+	/* addressbook = eti_eds_open_addressbook(addressbook_uri, error); original code */
+	/* Original code used addressbook uri to access address books */
+	/* Have to return source or EBookClient or ????? for addressbooks here maybe */
+
+    client = eti_eds_open_addressbook();
     if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
         g_prefix_error(error, "Couldn't open addressbook: ");
         goto out;
     }
 
-    e_contacts = eti_eds_get_contacts(addressbook, NULL, error);
+    e_contacts = eti_eds_get_contacts(client, NULL, error);
     if ((error != NULL) && (*error != NULL)) {
         g_prefix_error(error,
                        "Error retrieving contacts from evolution addressbook: ");
@@ -194,8 +201,8 @@ out:
     if (contacts != NULL)
         g_hash_table_destroy(contacts);
 
-    if (addressbook != NULL)
-        g_object_unref(G_OBJECT(addressbook));
+ /*   if (client != NULL)
+        g_object_unref(G_OBJECT(addressbook)); */
 
     return success;
 }
@@ -207,7 +214,27 @@ int main(int argc, char **argv)
     GHashTable *contacts;
     EtiOptions *command_line_options;
 
-    g_type_init();
+    /*g_type_init(); This has been deprecated TW 29-01-16 */
+
+	/* Create and Start the g_main_loop so that DBus can process messages TW */
+	
+   GMainLoop *loop = NULL;
+    GMainContext *context;
+    GSource *source;
+    		
+   
+    /* create a context */
+    context = g_main_context_new();
+
+    /* attach source to context */
+
+    g_source_attach(source,context);
+ 
+    /* create a main loop with context */
+    loop = g_main_loop_new(context,FALSE);
+	
+    g_main_loop_run (loop);
+
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
         g_print("Failed to parse command line options: %s\n", error->message);
@@ -217,7 +244,7 @@ int main(int argc, char **argv)
     eti_plist_set_debug(command_line_options->debug);
 
     if (command_line_options->list_addressbooks) {
-        eti_eds_dump_addressbooks(NULL);
+        eti_eds_dump_addressbooks(void);
         eti_options_free(command_line_options);
         return 0;
     }
