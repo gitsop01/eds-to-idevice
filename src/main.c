@@ -22,6 +22,15 @@
 #include "eti-plist.h"
 #include "eti-sync.h"
 #include <glib-2.0/glib.h>
+#include <gtk/gtk.h>
+
+/* NOTE */
+/* One note that isn't well-documented is the program needs to be running */
+/* a GLib main loop for the ESourceRegistry/EBookClient methods to work, as */
+/* they rely on GLib to invoke D-Bus methods and collect results. */
+
+
+
 
 struct _EtiOptions {
     gboolean transfer;
@@ -157,24 +166,25 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
                                       const char *addressbook_uri,
                                       GError **error)
 {
-    EBook *addressbook;
+    EBook *addressbook = NULL;
     GList *e_contacts = NULL;
     GHashTable *contacts = NULL;
     gboolean success = FALSE;
-	EBookClient *client;
+	EClient *client; 
+/*	EBookClient *client1; */
 
 	/* FIXME addressbook_uri has been deprecated TW 20/12/15 */
 	/* addressbook = eti_eds_open_addressbook(addressbook_uri, error); original code */
 	/* Original code used addressbook uri to access address books */
 	/* Have to return source or EBookClient or ????? for addressbooks here maybe */
 
-    client = eti_eds_open_addressbook();
+	 client = eti_eds_open_addressbook();
     if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
         g_prefix_error(error, "Couldn't open addressbook: ");
         goto out;
     }
 
-    e_contacts = eti_eds_get_contacts(client, NULL, error);
+    e_contacts = eti_eds_get_contacts((EBookClient *) client, NULL, error);
     if ((error != NULL) && (*error != NULL)) {
         g_prefix_error(error,
                        "Error retrieving contacts from evolution addressbook: ");
@@ -213,27 +223,33 @@ int main(int argc, char **argv)
     GError *error = { 0, };
     GHashTable *contacts;
     EtiOptions *command_line_options;
+	
+	/* FIXME START GTK-INSPECTOR interactive debugging */
+	 gtk_window_set_interactive_debugging(TRUE); 
+	
+	 gtk_main(void);
 
     /*g_type_init(); This has been deprecated TW 29-01-16 */
 
 	/* Create and Start the g_main_loop so that DBus can process messages TW */
 	
-   GMainLoop *loop = NULL;
-    GMainContext *context;
-    GSource *source;
+   /* GMainLoop *loop = NULL; */
+  /*  GMainContext *context = NULL;  This sets the default context to be used. */
+  /*  GSource *source = NULL; */
     		
    
     /* create a context */
-    context = g_main_context_new();
+  /*  context = g_main_context_new(); */
 
     /* attach source to context */
 
-    g_source_attach(source,context);
+  /*  g_source_attach(source,context); */
  
     /* create a main loop with context */
-    loop = g_main_loop_new(context,FALSE);
+  /*  loop = g_main_loop_new(context,FALSE); */
 	
-    g_main_loop_run (loop);
+	/* Main Loop run */
+  /*  g_main_loop_run (loop); */
 
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
@@ -244,7 +260,7 @@ int main(int argc, char **argv)
     eti_plist_set_debug(command_line_options->debug);
 
     if (command_line_options->list_addressbooks) {
-        eti_eds_dump_addressbooks(void);
+        eti_eds_dump_addressbooks();
         eti_options_free(command_line_options);
         return 0;
     }

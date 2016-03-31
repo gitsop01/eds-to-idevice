@@ -83,6 +83,7 @@ PKG_CHECK_MODULES(LIBPLIST, [libplist])
 dnl need glib 2.26 for GDateTime
 PKG_CHECK_MODULES(GLIB2, [glib-2.0 >= 2.26])
 PKG_CHECK_MODULES(EDS, [libebook-1.2])
+PKG_CHECK_MODULES(LIBGTK3, gtk+-3.0 >= 3.18.0)
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

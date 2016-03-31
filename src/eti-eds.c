@@ -30,12 +30,6 @@ GQuark eti_ebook_error_quark(void)
     return g_quark_from_static_string("eti-ebook-error-quark");
 }
 
-/* NOTE */
-/* One note that isn't well-documented is the program needs to be running */
-/* a GLib main loop for the ESourceRegistry/EBookClient methods to work, as */
-/* they rely on GLib to invoke D-Bus methods and collect results. */
-
-
 
 
 /* Code reused from
@@ -46,7 +40,7 @@ GList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError 
 {
     EBookQuery *query;
   /*  GList *contacts; */
-    GSList *out_contacts;
+    GSList *out_contacts, *l;
     gboolean query_succeeded;
 	gchar *query_string;
 
@@ -83,10 +77,16 @@ GList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError 
         g_set_error(error, ETI_EBOOK_ERROR,
                     ETI_EBOOK_ERROR_QUERY,
                     "Failed to run addressbook query");
-        return NULL;
+	
+        return FALSE;
     }
 
-    return NULL; /* FIXME return value required */
+	 /* Loop through the list of out_contacts */
+    for(l = out_contacts; l!= NULL; l = l->next) {
+      	 printf("List of out_contacts are: %s", (char *)l->data);
+	 /*   return (char *)l->data;  FIXME return value required */
+	}
+	return FALSE;
 }
 
 	/* FIXME e_book_new_from_uri has been deprecated TW 21/12/15 */
@@ -133,8 +133,8 @@ GError *error = NULL;
 
 	client = e_book_client_connect_sync( source, 10, NULL, &error);
 
-	if (client == FALSE){
-		printf("eti_eds_open_addressbook---e_book_client_connect_sync failed");
+	if (client == NULL){
+		printf("eti_eds_open_addressbook--e_book_client_connect_sync failed");
 	}
 	
     if (error != NULL){
