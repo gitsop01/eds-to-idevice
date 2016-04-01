@@ -62,7 +62,7 @@ static EtiOptions *parse_command_line(int argc, char **argv, GError **error)
           { "transfer", 't', 0, G_OPTION_ARG_NONE, &options->transfer, "Transfer contacts to the device [default: false]", NULL },
           { "uuid", 'u', 0, G_OPTION_ARG_STRING, &options->idevice_uuid, "uuid of the device to use [default: autodetected]", "M" },
  /*         { "uri", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uri, "uri of the addressbook to use [default: system default]", "uri" }, */
-          { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and URIs if all available addressbooks", NULL},
+          { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and URIs of all available addressbooks", NULL},
           { "save-photos", 'p', 0, G_OPTION_ARG_NONE, &options->save_photos, NULL },
           { "delete-all-contacts", 0, 0, G_OPTION_ARG_NONE, &options->wipe_contacts, "Delete all contacts on the device (DESTRUCTIVE!!) [default: off]", NULL },
           { "debug", 'd', 0, G_OPTION_ARG_NONE, &options->debug, "Dump all XML transfers between the host and the device [default: off]", NULL },
@@ -224,32 +224,28 @@ int main(int argc, char **argv)
     GHashTable *contacts;
     EtiOptions *command_line_options;
 	
-	/* FIXME START GTK-INSPECTOR interactive debugging */
-	 gtk_window_set_interactive_debugging(TRUE); 
 	
-	 gtk_main(void);
-
     /*g_type_init(); This has been deprecated TW 29-01-16 */
 
 	/* Create and Start the g_main_loop so that DBus can process messages TW */
 	
-   /* GMainLoop *loop = NULL; */
-  /*  GMainContext *context = NULL;  This sets the default context to be used. */
-  /*  GSource *source = NULL; */
+    GMainLoop *loop = NULL; 
+    GMainContext *context = NULL;  /* This sets the default context to be used. */
+   /* GSource *source = NULL; */
     		
    
     /* create a context */
-  /*  context = g_main_context_new(); */
+    context = g_main_context_new(); 
 
     /* attach source to context */
 
   /*  g_source_attach(source,context); */
  
     /* create a main loop with context */
-  /*  loop = g_main_loop_new(context,FALSE); */
+    loop = g_main_loop_new(context,FALSE); 
 	
 	/* Main Loop run */
-  /*  g_main_loop_run (loop); */
+    g_main_loop_run (loop); 
 
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
