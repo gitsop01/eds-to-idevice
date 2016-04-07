@@ -156,8 +156,9 @@ void eti_eds_dump_addressbooks(void)
 ESourceRegistry *source_registry = NULL;
 GError *error = NULL;
 /* char *p; */
-
+guint number;
 GList *list = NULL, *l = NULL;  /* *data */
+
 
 	  
 	 /*	const gchar uid; */
@@ -180,24 +181,25 @@ GList *list = NULL, *l = NULL;  /* *data */
 	
 	if (source_registry == NULL)
 	if (error != NULL) {
-        g_warning ("%s: %s", G_STRFUNC, error->message);
-      return;
+       g_warning ("%s: %s", G_STRFUNC, error->message);
+       return;
 	}
+
 	list = e_source_registry_list_sources( source_registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
 
 	if(list == NULL) {
        printf("No E_Source_Extension_Address_Book Registry List found");
-        return;
+       return;
     }
-
+	
+	
     /* Loop through the list of sources */
-    for(l = list; l!= NULL; l = l->next) {
-       
-	/*	GSList *groups, *s; */
+   for(l = list; l!= NULL; l = l->next) { 
+       printf("List of EWS-Address-books-sources are: %s\n", (char *)l->data);
+	} 
+	 number = g_list_length(list);
+	 printf("Number of EWS-Address-books-sources are: %i\n", number);
 
-	 printf("List of EWS-Address-books-sources are: %s", (char *)l->data);
-	
-	
 	/* FIXME e_source_list_peek_sources() has been deprecated TW 21/12/15 */
 
        /* groups = e_source_group_peek_sources(l->data); */
@@ -211,13 +213,14 @@ GList *list = NULL, *l = NULL;  /* *data */
 
 			 /*   gchar *uid;	*/
    	        
-			 /*uid = e_source_get_uid(source);	*/
+		/*	e_source_extension_get_source(		*/
+			 /* uid = e_source_get_uid(source);	*/
 
    	 /*		 g_print("Source name: %s, UID: %s\n\n", e_source_get_display_name( source), &uid); */
     		
 	 /*       g_free(uri);	*/
      /*   }  */
-   }		
+  /* }		*/
 
     /* Clean up */
     /* g_object_unref(books);	*/

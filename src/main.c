@@ -229,23 +229,23 @@ int main(int argc, char **argv)
 
 	/* Create and Start the g_main_loop so that DBus can process messages TW */
 	
-    GMainLoop *loop = NULL; 
-    GMainContext *context = NULL;  /* This sets the default context to be used. */
+  /*  GMainLoop *loop = NULL; */
+   /* GMainContext *context = NULL;   This sets the default context to be used. */
    /* GSource *source = NULL; */
     		
    
     /* create a context */
-    context = g_main_context_new(); 
+ /*   context = g_main_context_new(); */
 
     /* attach source to context */
 
   /*  g_source_attach(source,context); */
  
     /* create a main loop with context */
-    loop = g_main_loop_new(context,FALSE); 
+   /* loop = g_main_loop_new(context,FALSE); */
 	
 	/* Main Loop run */
-    g_main_loop_run (loop); 
+  /*  g_main_loop_run (loop); */
 
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
