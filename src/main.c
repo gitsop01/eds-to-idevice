@@ -46,7 +46,7 @@ typedef struct _EtiOptions EtiOptions;
 static void eti_options_free(EtiOptions *options)
 {
     g_free(options->idevice_uuid);
-    g_free(options->addressbook_uri);
+ /*   g_free(options->addressbook_uri); */
     g_free(options);
 }
 
@@ -62,7 +62,7 @@ static EtiOptions *parse_command_line(int argc, char **argv, GError **error)
           { "transfer", 't', 0, G_OPTION_ARG_NONE, &options->transfer, "Transfer contacts to the device [default: false]", NULL },
           { "uuid", 'u', 0, G_OPTION_ARG_STRING, &options->idevice_uuid, "uuid of the device to use [default: autodetected]", "M" },
  /*         { "uri", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uri, "uri of the addressbook to use [default: system default]", "uri" }, */
-          { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and URIs of all available addressbooks", NULL},
+          { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and UIDs of all available addressbooks", NULL},
           { "save-photos", 'p', 0, G_OPTION_ARG_NONE, &options->save_photos, NULL },
           { "delete-all-contacts", 0, 0, G_OPTION_ARG_NONE, &options->wipe_contacts, "Delete all contacts on the device (DESTRUCTIVE!!) [default: off]", NULL },
           { "debug", 'd', 0, G_OPTION_ARG_NONE, &options->debug, "Dump all XML transfers between the host and the device [default: off]", NULL },
@@ -97,9 +97,9 @@ static EtiContact *create_test_contact(void)
     return contact;
 }
 
-static GHashTable *eds_to_eti_contacts(GList *e_contacts)
+static GHashTable *eds_to_eti_contacts(GSList *e_contacts)
 {
-    GList *it;
+    GSList *it;
     GHashTable *contacts;
 
     contacts = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -166,11 +166,11 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
                                       const char *addressbook_uri,
                                       GError **error)
 {
-    EBook *addressbook = NULL;
-    GList *e_contacts = NULL;
+/*   EBook *addressbook = NULL; */
+    GSList *e_contacts = NULL;
     GHashTable *contacts = NULL;
     gboolean success = FALSE;
-	EClient *client; 
+	EBookClient *client; 
 /*	EBookClient *client1; */
 
 	/* FIXME addressbook_uri has been deprecated TW 20/12/15 */
@@ -179,34 +179,40 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
 	/* Have to return source or EBookClient or ????? for addressbooks here maybe */
 
 	 client = eti_eds_open_addressbook();
-    if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
+ /*   if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
         g_prefix_error(error, "Couldn't open addressbook: ");
-        goto out;
-    }
-
+		
+		g_print("test1\n");
+        goto out; 
+    } */
+	g_print("test2\n");
     e_contacts = eti_eds_get_contacts((EBookClient *) client, NULL, error);
     if ((error != NULL) && (*error != NULL)) {
         g_prefix_error(error,
                        "Error retrieving contacts from evolution addressbook: ");
-        goto out;
+        g_print("test3\n");
+		goto out;
     }
     if (e_contacts == NULL) {
         g_prefix_error(error, "No contacts in evolution addressbook");
-        goto out;
+        g_print("test4\n");
+		goto out;
     }
-
+	g_print("test5\n");
     contacts = eds_to_eti_contacts(e_contacts);
-
+	g_print("test6\n");
     eti_sync_send_contacts(sync, contacts, error);
-    if ((NULL != error) && (*error != NULL))
-        goto out;
-
+    if ((NULL != error) && (*error != NULL)){
+    	g_print("test7\n");   
+		goto out;
+	}
     success = TRUE;
 
 out:
+	g_print("test8\n");
     if (e_contacts != NULL) {
-        g_list_foreach(e_contacts, (GFunc)g_object_unref, NULL);
-        g_list_free(e_contacts);
+        g_slist_foreach(e_contacts, (GFunc)g_object_unref, NULL);
+        g_slist_free(e_contacts);
     }
     if (contacts != NULL)
         g_hash_table_destroy(contacts);
@@ -220,7 +226,7 @@ out:
 int main(int argc, char **argv)
 {
     EtiSync *sync;
-    GError *error = { 0, };
+    GError *error = NULL;
     GHashTable *contacts;
     EtiOptions *command_line_options;
 	
@@ -230,22 +236,11 @@ int main(int argc, char **argv)
 	/* Create and Start the g_main_loop so that DBus can process messages TW */
 	
   /*  GMainLoop *loop = NULL; */
-   /* GMainContext *context = NULL;   This sets the default context to be used. */
-   /* GSource *source = NULL; */
+   /* GMainContext *context = NULL;    This sets the default context to be used. */
+ /*   GSource *source = NULL; */
     		
    
-    /* create a context */
- /*   context = g_main_context_new(); */
-
-    /* attach source to context */
-
-  /*  g_source_attach(source,context); */
- 
-    /* create a main loop with context */
-   /* loop = g_main_loop_new(context,FALSE); */
-	
-	/* Main Loop run */
-  /*  g_main_loop_run (loop); */
+  
 
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
@@ -261,18 +256,24 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    sync = eti_sync_new(command_line_options->idevice_uuid, &error);
+	/* added contacts function for test here TW 09/04/16 */
+/*	EBookClient *client = eti_eds_open_addressbook(); */
+/*	eti_eds_get_contacts( (EBookClient *) client, NULL, NULL); */
+	g_print("uuid = %s", command_line_options->idevice_uuid);
+    sync = eti_sync_new(command_line_options->idevice_uuid, &error); 
+	/*	const gchar *uuid = "f208e0a477129e9272babf87b7c4b4ebade7948d"; */
+/*	  sync = eti_sync_new(uuid, &error); */
 
-    if (NULL != error) {
+  /*  if (NULL != error) {
         g_print("failed to create sync object: %s\n", error->message);
         goto error;
     }
-    g_assert(sync != NULL);
+    g_assert(sync != NULL); */
 
     eti_sync_start_sync(sync, &error);
     if (NULL != error) {
         g_print("failed to start synchronization: %s\n", error->message);
-        goto error;
+        goto error; 
     }
 
     if (command_line_options->wipe_contacts) {
@@ -320,7 +321,8 @@ int main(int argc, char **argv)
     sync = NULL;
 
     return 0;
-error:
+
+ error:
     if (error != NULL)
         g_clear_error(&error);
     if (contacts != NULL)

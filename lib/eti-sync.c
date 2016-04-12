@@ -51,13 +51,14 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
 	
 	
 	
+	/* I think we are missing the uuid of the device here TW 09-04-16 */
 
-    sync = g_new0(EtiSync, 1);
+    sync = g_new0(EtiSync, 2);
     i_status = idevice_new(&sync->idevice, uuid);
     if (IDEVICE_E_SUCCESS != i_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_IDEVICE_COMMUNICATION,
-                    "failed to connect to device");
+                    "failed to connect to device\n");
         goto error;
     }
 
@@ -66,7 +67,7 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
     if (LOCKDOWN_E_SUCCESS != l_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_IDEVICE_COMMUNICATION,
-                    "failed to create lockdownd client");
+                    "failed to create lockdownd client\n");
         goto error;
     }
 
@@ -81,7 +82,7 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
     if (LOCKDOWN_E_SUCCESS != l_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_IDEVICE_COMMUNICATION,
-                    "failed to start com.apple.mobilesync service");
+                    "failed to start com.apple.mobilesync service\n");
         goto error;
     }
 
@@ -98,7 +99,7 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
     if (MOBILESYNC_E_SUCCESS != m_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_IDEVICE_COMMUNICATION,
-                    "failed to create mobilesync client");
+                    "failed to create mobilesync client\n");
         goto error;
     }
 
@@ -123,7 +124,7 @@ gboolean eti_sync_start_sync(EtiSync *sync, GError **error)
     uint64_t device_data_class_version;
     mobilesync_anchors_t anchors;
     mobilesync_error_t m_status;
-	char **Error = NULL;
+	char *ERRor = NULL;
 
     g_get_current_time(&cur_time);
     cur_time_str = g_time_val_to_iso8601(&cur_time);
@@ -137,16 +138,21 @@ gboolean eti_sync_start_sync(EtiSync *sync, GError **error)
 	/* EDI_CLASS_STORAGE_VERSION, &sync_type, &device_data_class_version); */
 	/* note: declared here */
 	/* mobilesync_error_t mobilesync_start(mobilesync_client_t client, const char *data_class, */
-	/* mobilesync_anchors_t anchors, uint64_t computer_data_class_version, mobilesync_sync_type_t */ 		/* *sync_type, uint64_t device_data_class_version, FIXME char error_description); TW 10-01-2016 */
+	/* mobilesync_anchors_t anchors, uint64_t computer_data_class_version, mobilesync_sync_type_t */ 		
+	/* *sync_type, uint64_t device_data_class_version, FIXME char error_description); TW 10-01-2016 */
 
-    m_status = mobilesync_start(sync->msync, "com.apple.Contacts", anchors,
+	
+    m_status = mobilesync_start ( sync->msync, "com.apple.Contacts", anchors,
                                 EDI_CLASS_STORAGE_VERSION,
-                                &sync_type, &device_data_class_version, Error);
-    mobilesync_anchors_free(anchors);
+                                &sync_type, &device_data_class_version, &ERRor);
+    if (MOBILESYNC_E_INVALID_ARG == m_status){
+	g_print("mobilesync-start-arg is invalid\n");
+	}
+	mobilesync_anchors_free(anchors); 
     if (MOBILESYNC_E_SUCCESS != m_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_SYNCING,
-                    "failed to start synchronization");
+                    "failed to start synchronization\n");
         return FALSE;
     }
 
@@ -182,7 +188,7 @@ GHashTable *eti_sync_get_contacts(EtiSync *sync, GError **error)
     if (NULL == parser) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_READING,
-                    "failed to create contacts parser");
+                    "failed to create contacts parser\n");
         return NULL;
     }
 
@@ -190,7 +196,7 @@ GHashTable *eti_sync_get_contacts(EtiSync *sync, GError **error)
     if (MOBILESYNC_E_SUCCESS != m_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_READING,
-                    "failed to ask device for contacts");
+                    "failed to ask device for contacts\n");
         eti_contact_plist_parser_free(parser, TRUE);
         return NULL;
     }
@@ -201,7 +207,7 @@ GHashTable *eti_sync_get_contacts(EtiSync *sync, GError **error)
         if (MOBILESYNC_E_SUCCESS != m_status) {
             g_set_error(error, ETI_SYNC_ERROR,
                         ETI_SYNC_ERROR_READING,
-                        "failed to read contacts from device");
+                        "failed to read contacts from device\n");
             eti_contact_plist_parser_free(parser, TRUE);
             return NULL;
         }
@@ -210,7 +216,7 @@ GHashTable *eti_sync_get_contacts(EtiSync *sync, GError **error)
         if (MOBILESYNC_E_SUCCESS != m_status) {
             g_set_error(error, ETI_SYNC_ERROR,
                         ETI_SYNC_ERROR_READING,
-                        "failed to acknowledge receiving contacts");
+                        "failed to acknowledge receiving contacts\n");
             break;
         }
 
@@ -243,16 +249,28 @@ static plist_t send_one(EtiSync *sync, plist_t entities,
     if (MOBILESYNC_E_SUCCESS != m_status) {
         g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_WRITING,
-                    "failed to send contacts to device");
+                    "failed to send contacts to device\n");
         return NULL;
     }
 
-    m_status = mobilesync_remap_identifiers(sync->msync,
-                                            &remapped_identifiers);
+    m_status = mobilesync_remap_identifiers(sync->msync, &remapped_identifiers);
     if (MOBILESYNC_E_SUCCESS != m_status) {
-        g_set_error(error, ETI_SYNC_ERROR,
+    /*    g_set_error(error, ETI_SYNC_ERROR,
                     ETI_SYNC_ERROR_WRITING,
-                    "failed to receive remapped identifiers from device");
+                    "failed to receive remapped identifiers from device\n"); */
+		g_print("Failed to recieve remapped identifiers from device\n");
+		if (MOBILESYNC_E_INVALID_ARG == m_status){
+			g_print("One of the parameters is invalid\n");
+		}
+		if (MOBILESYNC_E_PLIST_ERROR == m_status){
+			g_print("The current recieved plist is not of valid form\n");
+		}
+		if (MOBILESYNC_E_WRONG_DIRECTION == m_status){
+			g_print("The current sysnc session direction does not permit this call\n");
+		}
+		if (MOBILESYNC_E_CANCELLED == m_status){	
+			g_print("Device explicitly cancelled the session\n");
+		}
         return NULL;
     }
 

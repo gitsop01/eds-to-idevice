@@ -20,6 +20,9 @@
 #include "eti-eds.h"
 #include <evolution-data-server/libebook/libebook.h>
 #include <evolution-data-server/libedataserver/libedataserver.h>
+#include <glib-2.0/glib.h>
+
+
 
 ESourceRegistry *source_registry = NULL;
 
@@ -36,7 +39,9 @@ GQuark eti_ebook_error_quark(void)
  * http://code.eikke.com/ProjectSoylent/evo-addressbooks-test2.c
  * Copyright (C) 2005 Nicolas "Ikke" Trangez (eikke eikke commercial)
  */
-GList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError **error)
+ /* Function return declaration changed to GSList TW 09/04/16 */
+
+GSList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError **error)
 {
     EBookQuery *query;
   /*  GList *contacts; */
@@ -80,22 +85,28 @@ GList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError 
 	
         return FALSE;
     }
-
-	 /* Loop through the list of out_contacts */
+	guint number = g_slist_length(out_contacts);
+	g_print("\nNumber of EWS-Address-Books-contacts are: %i\n\n", number);
+	 
+	/* Loop through the list of EContacts - out_contacts */
+		g_print("List of Default Addressbook Contacts are:\n");
+ 
     for(l = out_contacts; l!= NULL; l = l->next) {
-      	 printf("List of out_contacts are: %s", (char *)l->data);
+		 EContact *name = E_CONTACT ( l->data); 
+      	 g_print("%s\n", (char *) e_contact_get(name,E_CONTACT_FULL_NAME ));
 	 /*   return (char *)l->data;  FIXME return value required */
 	}
-	return FALSE;
+	return out_contacts;
 }
 
 	/* FIXME e_book_new_from_uri has been deprecated TW 21/12/15 */
 	/* FIXME e_book_new_default_addressbook has been deprecated TW 21/12/15 */
 
-EClient *eti_eds_open_addressbook(void)
+EBookClient *eti_eds_open_addressbook(void)
 {
 
 ESource *source;
+EBookClient *book_client;
 EClient *client = NULL;
 GError *error = NULL;
 /* const gchar *source_uid; */
@@ -121,7 +132,8 @@ GError *error = NULL;
 	
 	if (source_registry == NULL)
 	if (error != NULL) {
-        g_warning ("%s: %s", G_STRFUNC, error->message);
+		g_print("source_registry error = %s\n", error->message);
+        g_warning ("%s: %s\n", G_STRFUNC, error->message);
       return FALSE;
     }
 
@@ -135,47 +147,31 @@ GError *error = NULL;
 
 	if (client == NULL){
 		printf("eti_eds_open_addressbook--e_book_client_connect_sync failed");
+		return NULL;
 	}
 	
     if (error != NULL){
         g_warning ("%s: %s", G_STRFUNC, error->message);
-      return FALSE;
+      return NULL;
     }
     g_object_unref(source);
 
-  /*  return ebook; */
-  /* we need to return EBookClient not EClient */ 
-  /* or add  e_book_client_connect() to get an EBookClient object. */
-	
-     return client; 
+  
+  /* return EBookClient */ 
+  	book_client = E_BOOK_CLIENT (client);
+    
+	return book_client; 
 }
 
 void eti_eds_dump_addressbooks(void)
 {
 
 ESourceRegistry *source_registry = NULL;
-GError *error = NULL;
+GError *error = NULL; 
 /* char *p; */
 guint number;
 GList *list = NULL, *l = NULL;  /* *data */
-
-
-	  
-	 /*	const gchar uid; */
-
-	/* FIXME e_book_get_addressbooks has been deprecated TW 21/12/15 */
-
-    /* Query all addressbooks available on the system */
-  
-	/*  if(!e_book_get_addressbooks(&books, &err)) { */
-    /*    return; */
-    /* } */
-
-	/* FIXME e_source_list_peek_group() has been deprecated TW 21/12/15 */
-
-    /* Get a real list of the books */
-
-	/* list = e_source_list_peek_groups(books); */
+const gchar *uid;	
 	
 	source_registry = e_source_registry_new_sync( NULL, &error);
 	
@@ -184,21 +180,29 @@ GList *list = NULL, *l = NULL;  /* *data */
        g_warning ("%s: %s", G_STRFUNC, error->message);
        return;
 	}
+	/* Get the list of enabled EWS sources */
 
-	list = e_source_registry_list_sources( source_registry, E_SOURCE_EXTENSION_ADDRESS_BOOK);
-
+    list = e_source_registry_list_enabled( source_registry, E_SOURCE_EXTENSION_ADDRESS_BOOK); 
+	
+	/* Print error if list is not available and return */
 	if(list == NULL) {
-       printf("No E_Source_Extension_Address_Book Registry List found");
-       return;
+       g_print("No E_Source_Extension_Address_Book Registry List found\n");
+       return; 
     }
 	
+	/* Print-out enabled EWS source list names and their UID's */
 	
-    /* Loop through the list of sources */
-   for(l = list; l!= NULL; l = l->next) { 
-       printf("List of EWS-Address-books-sources are: %s\n", (char *)l->data);
+	number = g_list_length(list);
+	g_print("\nNumber of enabled EWS-Address-Books-Sources is: %i\n\n", number);
+	g_print("Enabled EWS-Address-Book-Source-Names and UID are:\n\n");
+	
+	/* Loop through the list of sources */
+	for(l = list; l!= NULL; l = l->next) { 
+		ESource *source = E_SOURCE (l->data);
+		uid = e_source_get_uid(source);
+        g_print("%s, UID: %s\n", e_source_get_display_name( source), (char *) uid);
 	} 
-	 number = g_list_length(list);
-	 printf("Number of EWS-Address-books-sources are: %i\n", number);
+	 g_print("\n");
 
 	/* FIXME e_source_list_peek_sources() has been deprecated TW 21/12/15 */
 
@@ -211,20 +215,19 @@ GList *list = NULL, *l = NULL;  /* *data */
 			/* FIXME e_source_get_uri() has been deprecated TW 21/12/15 */
 			/* FIXME e_source_peek_name() has been deprecated TW 21/12/15 */
 
-			 /*   gchar *uid;	*/
+			   
    	        
 		/*	e_source_extension_get_source(		*/
-			 /* uid = e_source_get_uid(source);	*/
-
-   	 /*		 g_print("Source name: %s, UID: %s\n\n", e_source_get_display_name( source), &uid); */
+		/*	  uid = e_source_get_uid(source);	*/
+   	    /*  g_print("Source name: %s, UID: %s\n\n", e_source_get_display_name( source), &uid); */
     		
 	 /*       g_free(uri);	*/
      /*   }  */
   /* }		*/
 
-    /* Clean up */
-    /* g_object_unref(books);	*/
 
-    g_list_free_full(list, (GDestroyNotify) g_object_unref );
+    /* Clean up */
+       g_list_free_full(list, (GDestroyNotify) g_object_unref );
+
 }
 

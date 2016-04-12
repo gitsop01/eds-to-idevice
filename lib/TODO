@@ -4,8 +4,17 @@ Update to gtk3.18 + libmobiledevice 1.20 + evolution-data-server 3.18
 1) FOUND GLIB2_FLAGS and GTK3_CFLAGS Missing from Build section of library in Makefile.am stopping compiler DONE
 2) Find and Update deprecated functions in all source files WIP
 3) Updated source to match new eds API WIP
-4) Check error reporting and fix as required.
-5) Run application and see it it works correctly
+4) Check error reporting and fix as required. WIP
+	a)Numerous functions have Gerror pileup and use g_set_error etc require fixing
+
+5) Run application and see it it works correctly WIP
+	a) Use -h or --help for command-line options DONE
+	b) Use -u --uuid 
+	c) 
+
+
+
+
 6) Fix application errors and bugs.
 7) Build a gui and recode to allow two-way syncs and merges or write contacts data to file for backup 
 8) Incorporate the program into sbmanager as add-on maybe.
