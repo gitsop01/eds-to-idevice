@@ -26,6 +26,10 @@ static gboolean is_empty(const char *str)
     return ((str == NULL) || (*str == '\0'));
 }
 
+	/* FIXME e_contact_get_string has been deprecated but is a built function */
+	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* Name changed to *E_contact_get_string() */
+
 static gchar *E_contact_get_string(EContact *contact, EContactField field_id)
 {
   gchar *value;

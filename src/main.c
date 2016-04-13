@@ -24,11 +24,15 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
 
-/* NOTE */
-/* One note that isn't well-documented is the program needs to be running */
-/* a GLib main loop for the ESourceRegistry/EBookClient methods to work, as */
-/* they rely on GLib to invoke D-Bus methods and collect results. */
-
+/** NOTE ON GMainLoop.
+*
+* One note that isn't well-documented is the program needs to be running a GLib main loop for the 
+* ESourceRegistry/EBookClient methods to work, as they rely on GLib to invoke D-Bus methods and 
+* collect results. 
+* From information received synchronous calls to EDS does not require a GMainLoop operating as
+* internally they call asynchronous functions that start a temporary GMainLoop for the duration of the
+* their asychronous call.
+**/
 
 
 
@@ -61,7 +65,7 @@ static EtiOptions *parse_command_line(int argc, char **argv, GError **error)
       {
           { "transfer", 't', 0, G_OPTION_ARG_NONE, &options->transfer, "Transfer contacts to the device [default: false]", NULL },
           { "uuid", 'u', 0, G_OPTION_ARG_STRING, &options->idevice_uuid, "uuid of the device to use [default: autodetected]", "M" },
- /*         { "uri", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uri, "uri of the addressbook to use [default: system default]", "uri" }, */
+ /*         { "uid", 'f', 0, G_OPTION_ARG_STRING, &options->addressbook_uid, "uid of the addressbook to use [default: system default]", "uid" }, */
           { "list-addressbooks", 'l', 0, G_OPTION_ARG_NONE, &options->list_addressbooks, "list the name and UIDs of all available addressbooks", NULL},
           { "save-photos", 'p', 0, G_OPTION_ARG_NONE, &options->save_photos, NULL },
           { "delete-all-contacts", 0, 0, G_OPTION_ARG_NONE, &options->wipe_contacts, "Delete all contacts on the device (DESTRUCTIVE!!) [default: off]", NULL },
@@ -166,20 +170,25 @@ static gboolean transfer_eds_contacts(EtiSync *sync,
                                       const char *addressbook_uri,
                                       GError **error)
 {
-/*   EBook *addressbook = NULL; */
-    GSList *e_contacts = NULL;
-    GHashTable *contacts = NULL;
-    gboolean success = FALSE;
-	EBookClient *client; 
-/*	EBookClient *client1; */
 
-	/* FIXME addressbook_uri has been deprecated TW 20/12/15 */
+GSList *e_contacts = NULL;
+GHashTable *contacts = NULL;
+gboolean success = FALSE;
+EBookClient *client; 
+
+
+   /* FIXME Remove test printf statements or include for debugging purpose */
+
+	/* FIXME PART DONE addressbook_uri has been deprecated TW 20/12/15 */
 	/* addressbook = eti_eds_open_addressbook(addressbook_uri, error); original code */
 	/* Original code used addressbook uri to access address books */
-	/* Have to return source or EBookClient or ????? for addressbooks here maybe */
+	/* Have to return source or EBookClient or IUD????? for addressbooks here maybe */
 
 	 client = eti_eds_open_addressbook();
- /*   if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
+
+     /* FIXME This error message code needs updating or removed as appropriate */
+
+/*   if ((addressbook == NULL) || ((error != NULL) && (*error != NULL))) {
         g_prefix_error(error, "Couldn't open addressbook: ");
 		
 		g_print("test1\n");
@@ -229,19 +238,14 @@ int main(int argc, char **argv)
     GError *error = NULL;
     GHashTable *contacts;
     EtiOptions *command_line_options;
-	
-	
-    /*g_type_init(); This has been deprecated TW 29-01-16 */
 
-	/* Create and Start the g_main_loop so that DBus can process messages TW */
-	
-  /*  GMainLoop *loop = NULL; */
-   /* GMainContext *context = NULL;    This sets the default context to be used. */
- /*   GSource *source = NULL; */
-    		
-   
-  
-
+    /** Create and Start the g_main_loop so that DBus can process messages TW
+    *
+    *  GMainLoop *loop = NULL;
+    *  GMainContext *context = NULL;    This sets the default context to be used.
+    *  GSource *source = NULL; */
+    **/
+    		  
     command_line_options = parse_command_line(argc, argv, &error);
     if ((command_line_options == NULL) || (error != NULL)) {
         g_print("Failed to parse command line options: %s\n", error->message);
@@ -256,13 +260,14 @@ int main(int argc, char **argv)
         return 0;
     }
 
-	/* added contacts function for test here TW 09/04/16 */
-/*	EBookClient *client = eti_eds_open_addressbook(); */
-/*	eti_eds_get_contacts( (EBookClient *) client, NULL, NULL); */
+    /** added contacts function for test here TW 09/04/16
+    *	EBookClient *client = eti_eds_open_addressbook();
+    *	eti_eds_get_contacts( (EBookClient *) client, NULL, NULL);
+    **/
+
 	g_print("uuid = %s", command_line_options->idevice_uuid);
     sync = eti_sync_new(command_line_options->idevice_uuid, &error); 
-	/*	const gchar *uuid = "f208e0a477129e9272babf87b7c4b4ebade7948d"; */
-/*	  sync = eti_sync_new(uuid, &error); */
+
 
   /*  if (NULL != error) {
         g_print("failed to create sync object: %s\n", error->message);

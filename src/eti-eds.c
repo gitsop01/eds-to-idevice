@@ -23,10 +23,7 @@
 #include <glib-2.0/glib.h>
 
 
-
 ESourceRegistry *source_registry = NULL;
-
-
 
 GQuark eti_ebook_error_quark(void)
 {
@@ -43,11 +40,11 @@ GQuark eti_ebook_error_quark(void)
 
 GSList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError **error)
 {
-    EBookQuery *query;
-  /*  GList *contacts; */
-    GSList *out_contacts, *l;
-    gboolean query_succeeded;
-	gchar *query_string;
+EBookQuery *query;
+/*  GList *contacts; */
+GSList *out_contacts, *l;
+gboolean query_succeeded;
+gchar *query_string;
 
     /* Create a query */
     if (query_str == NULL) {
@@ -94,7 +91,7 @@ GSList *eti_eds_get_contacts(EBookClient *client, const gchar *query_str, GError
     for(l = out_contacts; l!= NULL; l = l->next) {
 		 EContact *name = E_CONTACT ( l->data); 
       	 g_print("%s\n", (char *) e_contact_get(name,E_CONTACT_FULL_NAME ));
-	 /*   return (char *)l->data;  FIXME return value required */
+
 	}
 	return out_contacts;
 }
@@ -109,24 +106,8 @@ ESource *source;
 EBookClient *book_client;
 EClient *client = NULL;
 GError *error = NULL;
-/* const gchar *source_uid; */
 
 
- /*   EBook *ebook;  */
-
- /*   if (addressbook_uri != NULL) */
- /*      ebook = e_book_new_from_uri(addressbook_uri, error); */
- /*   else */
- /*       ebook = e_book_new_default_addressbook (error); */
-
-/*    if ((error != NULL) && (*error != NULL)) { */
-/*        g_prefix_error (error, "Couldn't open default address book: "); */
-/*        return NULL; */
-/*    } */
-
-	/* FIXME e_book_open has been deprecated TW 24/12/15 */
-
-   /* e_book_open (ebook, TRUE, error); */
 
 	source_registry = e_source_registry_new_sync( NULL, &error);	
 	
@@ -139,9 +120,6 @@ GError *error = NULL;
 
 	source = e_source_registry_ref_builtin_address_book( source_registry);
 
-	/* source_uid = e_source_get_uid( source); */
-	
-	
 
 	client = e_book_client_connect_sync( source, 10, NULL, &error);
 
@@ -159,7 +137,7 @@ GError *error = NULL;
   
   /* return EBookClient */ 
   	book_client = E_BOOK_CLIENT (client);
-    
+
 	return book_client; 
 }
 
@@ -168,9 +146,8 @@ void eti_eds_dump_addressbooks(void)
 
 ESourceRegistry *source_registry = NULL;
 GError *error = NULL; 
-/* char *p; */
 guint number;
-GList *list = NULL, *l = NULL;  /* *data */
+GList *list = NULL, *l = NULL;
 const gchar *uid;	
 	
 	source_registry = e_source_registry_new_sync( NULL, &error);
@@ -203,28 +180,6 @@ const gchar *uid;
         g_print("%s, UID: %s\n", e_source_get_display_name( source), (char *) uid);
 	} 
 	 g_print("\n");
-
-	/* FIXME e_source_list_peek_sources() has been deprecated TW 21/12/15 */
-
-       /* groups = e_source_group_peek_sources(l->data); */
-
-      /*  for(s = groups; s != NULL; s = s->next) { */
-      /*     ESource *source = E_SOURCE(s->data);	*/
-            
-
-			/* FIXME e_source_get_uri() has been deprecated TW 21/12/15 */
-			/* FIXME e_source_peek_name() has been deprecated TW 21/12/15 */
-
-			   
-   	        
-		/*	e_source_extension_get_source(		*/
-		/*	  uid = e_source_get_uid(source);	*/
-   	    /*  g_print("Source name: %s, UID: %s\n\n", e_source_get_display_name( source), &uid); */
-    		
-	 /*       g_free(uri);	*/
-     /*   }  */
-  /* }		*/
-
 
     /* Clean up */
        g_list_free_full(list, (GDestroyNotify) g_object_unref );
