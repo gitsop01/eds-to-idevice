@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1335  USA.
  *
  */
 #include "eti-contact.h"
@@ -243,7 +243,7 @@ int main(int argc, char **argv)
     *
     *  GMainLoop *loop = NULL;
     *  GMainContext *context = NULL;    This sets the default context to be used.
-    *  GSource *source = NULL; */
+    *  GSource *source = NULL; 
     **/
     		  
     command_line_options = parse_command_line(argc, argv, &error);

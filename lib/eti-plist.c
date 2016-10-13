@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1335  USA
  */
 #include "eti-plist.h"
 
@@ -47,9 +47,7 @@ void eti_plist_dict_set_date(plist_t dict, const char *key, GDateTime *date)
 
     epoch = g_date_time_new_utc(2001, 1, 1, 0, 0, 0);
     timespan = g_date_time_difference(date, epoch);
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-    plist_dict_set_item(dict, key,
-                           plist_new_date(timespan/G_TIME_SPAN_SECOND,
+	plist_dict_set_item(dict, plist_new_date(timespan/G_TIME_SPAN_SECOND,
                                           timespan%G_TIME_SPAN_SECOND));
     g_date_time_unref(epoch);
 }
@@ -85,8 +83,7 @@ void eti_plist_dict_set_string(plist_t dict, const char *key, const char *value)
 {
     if (value == NULL)
         return;
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-    plist_dict_set_item(dict, key, plist_new_string(value));
+	plist_dict_set_item(dict, key, plist_new_string(value));
 }
 
 char *eti_plist_dict_get_string(plist_t node, const char *key)
@@ -112,8 +109,7 @@ void eti_plist_dict_set_data(plist_t dict, const char *key,
 {
     if (data == NULL)
         return;
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-    plist_dict_set_item(dict, key, plist_new_data((const gchar *)data, len));
+	    plist_dict_set_item(dict, key, plist_new_data((const gchar *)data, len));
 }
 
 guchar *eti_plist_dict_get_data(plist_t node, const char *key, guint64 *len)

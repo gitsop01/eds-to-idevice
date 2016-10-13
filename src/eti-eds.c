@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1335  USA
  *
  */
 #include "eti-eds.h"
@@ -79,7 +79,6 @@ gchar *query_string;
         g_set_error(error, ETI_EBOOK_ERROR,
                     ETI_EBOOK_ERROR_QUERY,
                     "Failed to run addressbook query");
-	
         return FALSE;
     }
 	guint number = g_slist_length(out_contacts);
@@ -112,10 +111,11 @@ GError *error = NULL;
 	source_registry = e_source_registry_new_sync( NULL, &error);	
 	
 	if (source_registry == NULL)
+
 	if (error != NULL) {
 		g_print("source_registry error = %s\n", error->message);
         g_warning ("%s: %s\n", G_STRFUNC, error->message);
-      return FALSE;
+        return FALSE;
     }
 
 	source = e_source_registry_ref_builtin_address_book( source_registry);
@@ -130,7 +130,7 @@ GError *error = NULL;
 	
     if (error != NULL){
         g_warning ("%s: %s", G_STRFUNC, error->message);
-      return NULL;
+        return NULL;
     }
     g_object_unref(source);
 
@@ -157,14 +157,15 @@ const gchar *uid;
        g_warning ("%s: %s", G_STRFUNC, error->message);
        return;
 	}
+
 	/* Get the list of enabled EWS sources */
 
     list = e_source_registry_list_enabled( source_registry, E_SOURCE_EXTENSION_ADDRESS_BOOK); 
 	
 	/* Print error if list is not available and return */
 	if(list == NULL) {
-       g_print("No E_Source_Extension_Address_Book Registry List found\n");
-       return; 
+        g_print("No E_Source_Extension_Address_Book Registry List found\n");
+        return; /* FIXME should exit here as we have no access to contacts on eds */
     }
 	
 	/* Print-out enabled EWS source list names and their UID's */

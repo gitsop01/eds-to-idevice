@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1335  USA
  */
 #include "eti-contact-plist-builder.h"
 #include "eti-contact.h"
@@ -26,7 +26,6 @@ static void plist_add_uid_link(plist_t node, const char *uid)
 
   array = plist_new_array();
   plist_array_append_item(array, plist_new_string(uid));
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
   plist_dict_set_item(node, "contact", array);
 }
 
@@ -46,8 +45,6 @@ static plist_t create_dict(const char *entity_name, const char *main_uid,
 
     field_info = plist_new_dict();
 
-
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
     plist_dict_set_item(field_info,
                            "com.apple.syncservices.RecordEntityName",
                            plist_new_string(entity_name));
@@ -91,8 +88,6 @@ static void add_one_generic(EtiContact *contact, const char *type,
     eti_plist_dict_set_string(field_info, "value", value);
     local_uid = get_uid(context);
     context->count++;
-	
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
     plist_dict_set_item(context->dict, local_uid, field_info);
     g_free(local_uid);
 }
@@ -111,8 +106,6 @@ static void add_one_date(EtiContact *contact, const char *type,
     eti_plist_dict_set_date(field_info, "value", date);
     local_uid = get_uid(context);
     context->count++;
-
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
     plist_dict_set_item(context->dict, local_uid, field_info);
     g_free(local_uid);
 }
@@ -132,8 +125,7 @@ static void add_one_im_user_id(EtiContact *contact, const char *type,
     eti_plist_dict_set_string(field_info, "user", user_id);
     local_uid = get_uid(context);
     context->count++;
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-    plist_dict_set_item(context->dict, local_uid, field_info);
+	plist_dict_set_item(context->dict, local_uid, field_info);
     g_free(local_uid);
 }
 
@@ -157,8 +149,7 @@ static void add_one_address(EtiContact *contact, const char *type,
     eti_plist_dict_set_string(field_info, "country code", country_code);
     local_uid = get_uid(context);
     context->count++;
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-    plist_dict_set_item(context->dict, local_uid, field_info);
+	plist_dict_set_item(context->dict, local_uid, field_info);
     g_free(local_uid);
 }
 
@@ -317,8 +308,7 @@ eti_contact_plist_builder_build_main(GHashTable *contacts)
             continue;
         }
 
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-        plist_dict_set_item(main_info,
+	    plist_dict_set_item(main_info,
                                "com.apple.syncservices.RecordEntityName",
                                plist_new_string("com.apple.contacts.Contact"));
         eti_plist_dict_set_string(main_info, "first name",
@@ -354,9 +344,7 @@ eti_contact_plist_builder_build_main(GHashTable *contacts)
 
         eti_contact_get_photo(contact, &image_data, &data_length);
         eti_plist_dict_set_data(main_info, "image", image_data, data_length);
-	/* FIXME plist_dict_insert_item’ is deprecated: use plist_dict_set_item instead TW 10/01/16 */
-
-        plist_dict_set_item(main_plist, uid, main_info);
+	    plist_dict_set_item(main_plist, uid, main_info);
     }
 
     eti_plist_dump(main_plist);

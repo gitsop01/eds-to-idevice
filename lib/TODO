@@ -1,25 +1,26 @@
-https://github.com/gitsop01/eds-to-idevice
+Website: https://github.com/gitsop01/eds-to-idevice
+
 Update to gtk3.18 + libmobiledevice 1.20 + evolution-data-server 3.18
 
 1) FOUND GLIB2_FLAGS and GTK3_CFLAGS Missing from Build section of library in Makefile.am stopping compiler DONE
-2) Find and Update deprecated functions in all source files WIP 90%
-3) Updated source to match new eds API WIP 95%
+2) Find and Update deprecated functions in all source files WIP 98%
+3) Updated source to match new eds API WIP 100%
 4) Check error reporting and fix as required. WIP 50%
 	a)Some functions have Gerror pileup and some use g_set_error etc require fixing WIP 20%
 
-5) Run application and see it it works correctly WIP
+5) Run application and see it it works correctly VERIFIED
 	a) Use -h or --help for command-line options VERIFIED
 	b) Use -u or --uuid for adding the unique device VERIFIED
 	c) Use -l or --list-addressbooks to get a list of enabled EWS addressbooks VERIFIED
 	d) Use --delete-all-contacts to delete all contacts from the device VERIFIED
 	e) Use -t or --transfer to sync EDS contacts info to a device.VERIFIED
 	f) Use -p or --photo to transfer EDS contact photo to a device WORK REQUIRED
-	g) use -d or --debug to dump all XML transfer information from the host to the device WORK REQUIRED
+	g) use -d or --debug to dump all XML transfer information from the host to the device VERIFIED
 	h) use -f or --uid to select another enabled EWS adddressbook to use TODO
 
 6) Fix application errors and bugs. WIP
 7) Build a gui and recode to allow two-way syncs and merges or write contacts data to file for backup TODO
-8) Incorporate the program into sbmanager as add-on maybe.
+8) Incorporate the program into evolution data server maybe
 
 
 

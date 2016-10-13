@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1335  USA
  */
 #include "eti-contact.h"
 #include "eti-contact-plist-builder.h"
@@ -47,12 +47,9 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
     idevice_error_t i_status;
     lockdownd_error_t l_status;
     mobilesync_error_t m_status;
-	lockdownd_service_descriptor_t service = NULL; /* FIXME */
+	lockdownd_service_descriptor_t service = NULL; 
 	
-	
-	
-	/* I think we are missing the uuid of the device here TW 09-04-16 */
-
+		
     sync = g_new0(EtiSync, 2);
     i_status = idevice_new(&sync->idevice, uuid);
     if (IDEVICE_E_SUCCESS != i_status) {
@@ -71,13 +68,7 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
         goto error;
     }
 
-	/* FIXME passing argument 3 of ‘lockdownd_start_service’ from incompatible pointer type */
-	/* [-Werror=incompatible-pointer-types]  &port);  */
-	/* note: expected ‘struct lockdownd_service_descriptor **’ but argument is of type */
-    /* ‘uint16_t  {aka short unsigned int }’ */
-	/*  lockdownd_error_t lockdownd_start_service(lockdownd_client_t client, const char */ 
-	/* identifier, lockdownd_service_descriptor_t service); TW 10-1-2016 */
-
+	
     l_status = lockdownd_start_service(lockdownd, "com.apple.mobilesync", &service);
     if (LOCKDOWN_E_SUCCESS != l_status) {
         g_set_error(error, ETI_SYNC_ERROR,
@@ -86,15 +77,7 @@ EtiSync *eti_sync_new(const char *uuid, GError **error)
         goto error;
     }
 
-	/* FIXME passing argument 2 of ‘mobilesync_client_new’ makes pointer from integer without */
-	/* a cast [-Werror=int-conversion] */
-    /* m_status = mobilesync_client_new(sync->idevice, FIXME port, &sync->msync);  */
-	/* note: expected ‘lockdownd_service_descriptor_t {aka struct lockdownd_service_descriptor }’ */
-	/*  but argument is of type ‘uint16_t {aka short unsigned int}’ */
-	/*  mobilesync_error_t mobilesync_client_new(idevice_t device, lockdownd_service_descriptor_t */ 		/* service, mobilesync_client_t  client); TW 10-1-2016 */
-
-
-
+	
     m_status = mobilesync_client_new(sync->idevice, service, &sync->msync);
     if (MOBILESYNC_E_SUCCESS != m_status) {
         g_set_error(error, ETI_SYNC_ERROR,
@@ -133,15 +116,7 @@ gboolean eti_sync_start_sync(EtiSync *sync, GError **error)
     g_free(host_anchor);
     g_free(cur_time_str);
 
-	/* FIXME too few arguments to function ‘mobilesync_start’ */
-    /*  m_status = mobilesync_start(sync->msync, "com.apple.Contacts", anchors, */
-	/* EDI_CLASS_STORAGE_VERSION, &sync_type, &device_data_class_version); */
-	/* note: declared here */
-	/* mobilesync_error_t mobilesync_start(mobilesync_client_t client, const char *data_class, */
-	/* mobilesync_anchors_t anchors, uint64_t computer_data_class_version, mobilesync_sync_type_t */ 		
-	/* *sync_type, uint64_t device_data_class_version, FIXME char error_description); TW 10-01-2016 */
-
-	
+		
     m_status = mobilesync_start ( sync->msync, "com.apple.Contacts", anchors,
                                 EDI_CLASS_STORAGE_VERSION,
                                 &sync_type, &device_data_class_version, &ERRor);
