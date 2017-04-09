@@ -23,3 +23,5 @@ Ensure your phone is plugged in or use the -uuid or -u (40 digit uuid command li
 Use -help or -h from the command line for all commandline arguments.
 Contact transfer info is sent to the terminal as the program is run.
 
+This utility has been tested on iphone 3, 4 and 7. 
+
