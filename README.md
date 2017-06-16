@@ -18,8 +18,14 @@ and should compile on most Linux distributions but must be running
 Evolution Data Server as the Source of the synced contacts.
 One way sync only.
 
+Tested with iphone3 iphone4 and iphone7.
+
 This is a GTK3 command line utility - start in a terminal as ./eds-to-idevice
 Ensure your phone is plugged in or use the -uuid or -u (40 digit uuid command line argument).
 Use -help or -h from the command line for all commandline arguments.
 Contact transfer info is sent to the terminal as the program is run.
+
+This is a private project and is not supported or endorsed by Apple Inc
+
+Registered trademarks and names are the property of the owners
 
