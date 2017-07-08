@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
- *  Copyright (C) 2015-2016 Timothy Ward gtwa001@gmail.com
+ *  Copyright (C) 2015-2017 Timothy Ward gtwa001@gmail.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "eti-plist.h"
 #include "eti-sync.h"
 #include <glib-2.0/glib.h>
-#include <gtk/gtk.h>
+#include <gtk-3.0/gtk/gtk.h>
 
 /** NOTE ON GMainLoop.
 *
