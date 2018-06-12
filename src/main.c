@@ -278,7 +278,7 @@ int main(int argc, char **argv)
     g_assert(sync != NULL); */
 
     eti_sync_start_sync(sync, &error);
-    if (NULL != error) {
+    if (error != NULL) {
         g_print("failed to start synchronization: %s\n", error->message);
         goto error;
     }
@@ -288,7 +288,7 @@ int main(int argc, char **argv)
         g_print("Press Ctrl+C to interrupt now\n");
         g_usleep(5*G_USEC_PER_SEC);
         eti_sync_wipe_all_contacts(sync, &error);
-        if (NULL != error) {
+        if (error != NULL) {
             g_print("failed to delete all contacts: %s\n", error->message);
             goto error;
         }
