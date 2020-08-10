@@ -6,12 +6,10 @@ This code gas been cloned from https://gitlab.com/eds-to-idevice/eds-to-idevice/
 
 The original Author of the code is Christophe Fergeau <cfergeau@gmail.com>
 
-This fork is a development fork for GTK3 updated to the lastest libraries.
-
 Used to sync contact info between Evolution data server and an idevice.
 
 This code has been updating to  EDS version 3.24.3 and compiled with the latest
-libimobiledevice library 1.20.
+libimobiledevice library 1.20, using GCC 10.0.0.1
 
 This code has successfully transferred 440 EDS contacts to an idevice
 and should compile on most Linux distributions but must be running 

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
- *  Copyright (C) 2015 Timothy Ward gtwa001@gmail.com
+ *  Copyright (C) 2017-2020 Timothy Ward gtwa001@gmail.com
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ static gboolean is_empty(const char *str)
 }
 
 	/* FIXME e_contact_get_string has been deprecated but is a built function */
-	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* conflict with same name as library deprecated function TW 21/12/15 */
 	/* Name changed to *E_contact_get_string() */
 
 static gchar *E_contact_get_string(EContact *contact, EContactField field_id)
@@ -227,7 +227,7 @@ static void convert_emails(EContact *econtact, EtiContact *contact)
 
 
 	/* FIXME e_contact_get_string has been deprecated but is a built function */
-	/* comflict with same name as library deprecated function TW 21/12/15 */
+	/* conflict with same name as library deprecated function TW 21/12/15 */
 
 static void convert_urls(EContact *econtact, EtiContact *contact)
 {

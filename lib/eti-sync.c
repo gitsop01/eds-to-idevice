@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Christophe Fergeau <cfergeau@gmail.com>
- * Copyright (C) 2016 Timothy Ward <gtwa001@gmail.com>
+ * Copyright (C) 2016-2020 Timothy Ward <gtwa001@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -117,7 +117,7 @@ error:
 
 gboolean eti_sync_start_sync(EtiSync *sync, GError **error)
 {
-    GTimeVal cur_time;
+    struct GDateTime;
     gchar *cur_time_str;
     gchar *host_anchor;
     mobilesync_sync_type_t sync_type;
@@ -126,8 +126,8 @@ gboolean eti_sync_start_sync(EtiSync *sync, GError **error)
     mobilesync_error_t m_status;
 	char *ERRor = NULL;
 
-    g_get_current_time(&cur_time);
-    cur_time_str = g_time_val_to_iso8601(&cur_time);
+    g_get_real_time();
+    cur_time_str = g_date_time_format_iso8601(*GDateTime);
     host_anchor = g_strdup_printf("eti-%s", cur_time_str);
     anchors = mobilesync_anchors_new(NULL, host_anchor);
     g_free(host_anchor);

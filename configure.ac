@@ -1,7 +1,7 @@
 
 
 AC_PREREQ(2.65)
-AC_INIT([eds-to-idevice], [0.1.0, nospam@nowhere.com])
+AC_INIT([eds-to-idevice], [0.1.0, https://github.com/gitsop01/eds-to-idevice])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
